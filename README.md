@@ -1,6 +1,7 @@
 # WA1 2020/21 - LAB1
 
 This Repository contains all the exercises from LAB1 of WA1 course of Politecnico di Torino. The exercises text is shown below, but the original PDF is left anyway in the repository.
+All the exercises are proposed in order to make _JavaScript_ language more confident.
 
 ## Exercise 0 - Preparation
 
@@ -30,8 +31,8 @@ By means of _constructor functions_, create some Task objects and add them to a 
 ~~~
 * _filterAndPrint_: starting from the entire list of tasks, the method should filter out the tasks that are not urgent. After filtering, the method should print the content of the filtered TaskList (without any particular order).
 ~~~vctreestatus
-****** Tasks filtered, only (urgent == true): ****** 
-Id: 3, Description: phone call, Urgent: true, Private: false, Deadline: March 8, 2021 4:20 PM
+     ****** Tasks filtered, only (urgent == true): ****** 
+     Id: 3, Description: phone call, Urgent: true, Private: false, Deadline: March 8, 2021 4:20 PM
 ~~~
 
 **Hints**  
