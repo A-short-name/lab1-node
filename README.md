@@ -1,6 +1,6 @@
 # WA1 2020/21 - LAB1
 
-This Repository contains all the exercises from LAB1 of WA1 course of Politecnico di Torino.
+This Repository contains all the exercises from LAB1 of WA1 course of Politecnico di Torino. The exercises text is shown below, but the original PDF is left anyway in the repository.
 
 ## Exercise 0 - Preparation
 
