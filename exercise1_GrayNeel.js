@@ -2,6 +2,15 @@
 
 const dayjs = require('dayjs');
 
+/**
+ * This function creates a Task Object as required
+ * 
+ * @param {A unique numerical id (required)} id 
+ * @param {A textual description (required)} description 
+ * @param {Whether is urgent (dafult: false)} isUrgent 
+ * @param {Whether it is private (default: true)} isPrivate 
+ * @param {A deadline (ie, a date with or without a time. This field is optional)} deadline 
+ */
 function Task(id, description, isUrgent, isPrivate, deadline){
     this.id = id;
     this.description = description;
@@ -18,24 +27,41 @@ function Task(id, description, isUrgent, isPrivate, deadline){
     this.deadline = deadline;
 }
 
+/**
+ * This function creates a Tasklist object, which is a collection (array) of tasks.
+ */
 function TaskList() {
     this.tasks = [];
+
+    /**
+     * This function adds a task to the collection
+     * @param {A task object} task 
+     */
     this.add = (task) => {this.tasks.push(task);};
+
+    /**
+     * This function sorts tasks by deadline from the closest date to the farest. It also prints on console the result.
+     */
     this.sortAndPrint = () => {
         let res = this.tasks.sort((task1,task2) => {
+
+            /** If both dates to compare are undefined, return an equality result */
             if(task1.deadline===undefined && task2.deadline===undefined)
                 return 0;
+
+            /** If one of the two is undefined, return rispectevely task2>task1 (if task1 is undefined) or task2<task1 (if task2 is undefined) */
             if(task1.deadline===undefined)
                 return 1;
             if(task2.deadline===undefined)
                 return -1;
 
-            //return task1.deadline.toString()-task2.deadline.toString();
             return task1.deadline.diff(task2.deadline,'unit');
         });
         console.log("****** Tasks sorted by deadline (most recent first): ******");
         res.forEach((task) => {
             let dl;
+
+            /** If deadline is undefined, print "<not defined>" because it is not possible to do .toString() on an undefined date. */
             if(task.deadline===undefined)
                 dl = "<not defined>";
             else
@@ -43,16 +69,23 @@ function TaskList() {
             console.log('Id: ' + task.id + ', Description: ' + task.description + ', Urgent: ' + task.isUrgent + ', Private: ' + task.isPrivate + ', Deadline: ' + dl);
         });
     };
+
+    /**
+     * This function filters only task which are urgent and then prints tasks on console.
+     */
     this.filterAndPrint = () => {
         let res = [];
-        this.tasks.forEach((task) => {
+        res = this.tasks.filter((task) => {
             if(task.isUrgent===true)
-                res.push(task);
+                return true;
+            return false;
         });
         console.log("****** Tasks filtered, only (urgent == true): ******");
         if(res.length>0){
             res.forEach((task) => {
                 let dl;
+
+                /** Same as previous case */
                 if(task.deadline===undefined)
                     dl = "<not defined>";
                 else
@@ -72,6 +105,5 @@ tasklist.add(task2);
 let task3 = new Task(3, "phone call", true, false, dayjs('2021-03-08T16:20'));
 tasklist.add(task3);
 
-//console.log(tasklist);
 tasklist.sortAndPrint();
 tasklist.filterAndPrint();
