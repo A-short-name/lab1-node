@@ -129,8 +129,11 @@ let tasklist3 = new TaskList();
  * Function that will execute all the queries in a synchronous way. It is not required and not necessary.
  */
 async function main() {
+    console.log("****** Load and print all tasks ******");
     await tasklist1.load();
+    console.log("****** Load and print tasks with deadline after a given date ******");
     await tasklist2.loadPrintDate('2021-03-07');
+    console.log("****** Load and print tasks that match a given word ******");
     await tasklist3.loadPrintWord('call');
 }
 
