@@ -1,7 +1,7 @@
 'use strict';
 
 const dayjs = require('dayjs');
-
+const sqlite = require('sqlite3');
 /**
  * 
  * @param {*} id univoc index
@@ -62,11 +62,35 @@ function TaskList(){
         console.log("id |pvt\t|urgent\t|deadline\t\t|desc");
         console.log("---------------------------------------------------------------");
         tasks.forEach(
-            (task) => console.log(`${task.id} |${task.is_pvt}\t|${task.is_urgent}\t|${task.deadline.format('YYYY-MM-DD HH:mm:ss')}|${task.description}`)
+            (task) => console.log(`${task.id} |${task.is_pvt}\t|${task.is_urgent}\t|${(task.deadline == undefined) ? '<not Defined>\t\t' : task.deadline.format('YYYY-MM-DD HH:mm:ss\t')}|${task.description}`)
             );
-        console.log("---------------------------------------------------------------\n");
-        
-    }
+            console.log("---------------------------------------------------------------\n");
+            
+    };
+    /**
+     * function used to load the query result into the tasks array of this object
+     * example: db.all(query,myTasks.loadingFromDb);
+     * @param {*} err 
+     * @param {*} rows 
+     */
+    this.loadingFromDb = (err,rows) => {
+        if(err)
+            console.log(err);
+        else{
+            for(let row of rows){
+    
+    
+                const task_tmp = new Task(
+                    row.id,row.description,
+                    (row.deadline == undefined) ? undefined : dayjs(row.deadline),
+                    (row.urgent) ? false : true ,
+                    (row.private) ? false : true,
+                    //BUG: it doesn't parse 0/1 into false/true value
+                    );
+                this.add(task_tmp);
+            }
+        }
+    };
 }
 
 
@@ -93,8 +117,53 @@ console.log("#### Testing filter ####");
 myTasks1.filterAndPrint(); // it returns a new array of filtered tasks
 myTasks1.prettyPrint(myTasks1.tasks);
 
-//TODO: Exercise 2 - Database interaction
+
+
+console.log("#### Database interaction SQLite3 ####");
+
+
+
+const myTasks2 = new TaskList();
+const myFutureTasks = new TaskList();
+const myTasksAfterDate1 = new TaskList();
+const myTasksAfterDate2 = new TaskList();
+const myTasksWithWord = new TaskList();
+
+const date1 = '2021-03-05';
+const date2 = '2021-03-10';
+const word = 'lab';
+
+const query1_allTasks = "SELECT * FROM tasks";
+const query2_futureDeadline = "SELECT * FROM tasks WHERE date('now') < date(deadline) OR date(deadline) IS NULL;"
+const query3_tasksAfterDate1 = `SELECT * FROM tasks WHERE date('${date1}') < date(deadline) OR date(deadline) IS NULL;`;
+const query4_tasksAfterDate2 = `SELECT * FROM tasks WHERE date('${date2}') < date(deadline) OR date(deadline) IS NULL;`;
+const query5_tasksWithWord = `SELECT * FROM tasks WHERE description like '%${word}%';`;
+
+const db = new sqlite.Database('tasks.db',(err) => {
+    if(err)
+     throw err;
+});
+
+
+
+db.all(query1_allTasks,myTasks2.loadingFromDb);
+db.all(query2_futureDeadline,myFutureTasks.loadingFromDb);
+db.all(query3_tasksAfterDate1,myTasksAfterDate1.loadingFromDb);
+db.all(query4_tasksAfterDate2,myTasksAfterDate2.loadingFromDb);
+db.all(query5_tasksWithWord,myTasksWithWord.loadingFromDb);
+
+setTimeout(() => {console.log("my all tasks:"); myTasks2.prettyPrint(myTasks2.tasks)},500);
+setTimeout(() => {console.log("my future tasks:"); myFutureTasks.prettyPrint(myFutureTasks.tasks)},500);
+setTimeout(() => {console.log(`my tasks after ${date1} :`); myTasksAfterDate1.prettyPrint(myTasksAfterDate1.tasks)},500);
+setTimeout(() => {console.log(`my tasks after ${date2} :`); myTasksAfterDate2.prettyPrint(myTasksAfterDate2.tasks)},500);
+setTimeout(() => {console.log(`my tasks with word ${word} :`); myTasksWithWord.prettyPrint(myTasksWithWord.tasks)},500);
+
+//UPDATE: Improve the log of the results with promises
+
+
+
 
 console.log("byebye");
 
+debugger;
 
