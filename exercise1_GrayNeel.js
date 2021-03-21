@@ -24,7 +24,12 @@ function Task(id, description, isUrgent, isPrivate, deadline){
     else
         this.isPrivate = isPrivate;
     
-    this.deadline = deadline;
+    if(deadline===undefined)
+        this.deadline = "<not defined>";
+    else
+        this.deadline = deadline;
+
+    this.toString = () => (`Id: ${this.id} Description: ${this.description}, Urgent: ${this.isUrgent}, Private: ${this.isPrivate}, Deadline: ${this.deadline}`);
 }
 
 /**
@@ -46,27 +51,20 @@ function TaskList() {
         let res = this.tasks.sort((task1,task2) => {
 
             /** If both dates to compare are undefined, return an equality result */
-            if(task1.deadline===undefined && task2.deadline===undefined)
+            if(task1.deadline==="<not defined>" && task2.deadline==="<not defined>")
                 return 0;
 
             /** If one of the two is undefined, return rispectevely task2>task1 (if task1 is undefined) or task2<task1 (if task2 is undefined) */
-            if(task1.deadline===undefined)
+            if(task1.deadline==="<not defined>")
                 return 1;
-            if(task2.deadline===undefined)
+            if(task2.deadline==="<not defined>")
                 return -1;
 
             return task1.deadline.diff(task2.deadline,'unit');
         });
         console.log("****** Tasks sorted by deadline (most recent first): ******");
         res.forEach((task) => {
-            let dl;
-
-            /** If deadline is undefined, print "<not defined>" because it is not possible to do .toString() on an undefined date. */
-            if(task.deadline===undefined)
-                dl = "<not defined>";
-            else
-                dl = task.deadline.format('MMMM DD, YYYY h:mm A').toString();
-            console.log('Id: ' + task.id + ', Description: ' + task.description + ', Urgent: ' + task.isUrgent + ', Private: ' + task.isPrivate + ', Deadline: ' + dl);
+            console.log(task.toString());
         });
     };
 
@@ -75,26 +73,15 @@ function TaskList() {
      */
     this.filterAndPrint = () => {
         let res = [];
-        res = this.tasks.filter((task) => {
-            if(task.isUrgent===true)
-                return true;
-            return false;
-        });
+        res = this.tasks.filter((task) => (task.isUrgent===true));
         console.log("****** Tasks filtered, only (urgent == true): ******");
         if(res.length>0){
             res.forEach((task) => {
-                let dl;
-
-                /** Same as previous case */
-                if(task.deadline===undefined)
-                    dl = "<not defined>";
-                else
-                    dl = task.deadline.format('MMMM DD, YYYY h:mm A').toString();
-                console.log('Id: ' + task.id + ', Description: ' + task.description + ', Urgent: ' + task.isUrgent + ', Private: ' + task.isPrivate + ', Deadline: ' + dl);
-            })
-        }
-    }
-}
+                console.log(task.toString());
+            });
+        };
+    };
+};
 
 let tasklist = new TaskList();
 
