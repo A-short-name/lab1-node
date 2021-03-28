@@ -83,8 +83,8 @@ function TaskList(){
                 const task_tmp = new Task(
                     row.id,row.description,
                     (row.deadline == undefined) ? undefined : dayjs(row.deadline),
-                    (row.urgent) ? false : true ,
-                    (row.private) ? false : true,
+                    (row.urgent) ? true : false ,
+                    (row.private) ? true : false,
                     //BUG: it doesn't parse 0/1 into false/true value
                     );
                 this.add(task_tmp);
